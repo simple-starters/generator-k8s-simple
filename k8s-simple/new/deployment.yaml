@@ -1,6 +1,6 @@
 ---
 actions:
-  to: kubernetes/deployment.yaml
+  to: kubernetes/app/deployment.yaml
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -21,7 +21,20 @@ spec:
       containers:
       - image: {{artifactId}}:{{artifactVersion}}
         imagePullPolicy: IfNotPresent
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8sdev
+          - name: MYSQL_DATABASE
+            value: my_database
+          - name: MYSQL_USER
+            value: springuser
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: mysql-password
         livenessProbe:
+          initialDelaySeconds: 30
           httpGet:
             path: /actuator/info
             port: 8080
@@ -29,6 +42,7 @@ spec:
         ports:
         - containerPort: 8080
         readinessProbe:
+          initialDelaySeconds: 30
           httpGet:
             path: /actuator/health
             port: 8080
