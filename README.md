@@ -1,11 +1,17 @@
 # Simple generator for Kubernetes resources
 
-If you used the starter service, then the generator has already been executed and you can build and run the application and provision it's dependent services.
+This generator creates a Kubernetes Service and Deployment Resource to deploy a Spring Boot application.  It also can create the Kubernetes resources for deploying a MySQL database, should the application need it.
+
+If you used the starter service, then the generator has already been executed and you can deploy it's required services and then build and deploy the application.
+
+## Deploy required services
+
+If your application needs services such as a Database or Message Queue, this section shows you how to deploy these services to Kubernetes
 
 
-### Deploy required services to Kubernetes
+### MySQL
 
-If using `mysql` service, create a secret
+**Step 1:** Create a secret:
 
 ```
 kubectl create secret generic mysql \
@@ -13,24 +19,33 @@ kubectl create secret generic mysql \
   --from-literal=mysql-password=$(echo $RANDOM)
 ```
 
-If you recreate the secret and have already run the `mysql` service, also delete the persistent-volume in addition to the secret
+**Step 2:** Deploy the service"
+
+```
+kubectl apply -f kubernetes/services/mysql
+```
+
+#### Deleting Resources
+To recreate the secret, first delete the existing secret:
 
 ```
 kubectl delete secret mysql
+```
+To delete the database storage, delete the persistent volume:
+
+```
 kubectl delete pvc mysql
 ```
 
-Now deploy the services:
+To delete the MySQL service and deployment in addition to the persistent volume:
 
 ```
-kubectl apply -f kubernetes/services/**
+kubectl delete deployment,services,pvc -l app=mysql
 ```
 
-## Building and running the application
+## Building and deploying the application
 
-This simple generator depends on a configuration to comtainerize your project code. The easiest way to do this is using the new `buildpack` support added in Spring Boot version 2.3.
-
-### Build the Spring Boot project
+This generator relies on using the new `buildpack` support added in Spring Boot version 2.3 to create a container image.
 
 If you are using Minikube you should configure your terminal to use the same Docker environment:
 
@@ -38,13 +53,13 @@ If you are using Minikube you should configure your terminal to use the same Doc
 eval $(minikube docker-env)
 ```
 
-Now, build the project and the project and create the container image:
+**Step 1:** Build the project and create the container image:
 
 ```
 ./mvnw clean package spring-boot:build-image
 ```
 
-### Deploy Application to Kubernetes
+**Step 2:** Deploy the app to Kubernetes
 
 ```
 kubectl apply -f kubernetes/app
@@ -62,18 +77,20 @@ The README.md file from the code repository for the appliation should include a 
 
 This generator creates the Kubernetes `service` and `deploymnet` resources files to deploy a Spring Boot application using `kubectl`
 
-You will need to install the following command line tool:
+To use the generator you will need to install the following command line tool:
 
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
 
 ## Generator Commands
 
-`k8s-simple new` creates
+These commands use the `tss` CLI.
+
+`tss k8s-simple new` creates
 
 * A `kubernetes` directory with a `service.yaml` and `deployment.yaml`
 
-`k8s-simple new-services` creates
+`tss k8s-simple new-services` creates
 
 * A `kubernetes/services/<service-name>` directory with Kubernetes resource files for various services.  Currently only `mysql` service name is supported.
 
