@@ -22,6 +22,7 @@ spec:
       - image: {{artifactId}}:{{artifactVersion}}
         imagePullPolicy: IfNotPresent
         livenessProbe:
+          initialDelaySeconds: 60
           httpGet:
             path: /actuator/info
             port: 8080
@@ -29,6 +30,8 @@ spec:
         ports:
         - containerPort: 8080
         readinessProbe:
+          periodSeconds: 3
+          failureThreshold: 20
           httpGet:
             path: /actuator/health
             port: 8080
