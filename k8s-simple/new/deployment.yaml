@@ -34,7 +34,7 @@ spec:
                 name: mysql
                 key: mysql-password
         livenessProbe:
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60
           httpGet:
             path: /actuator/info
             port: 8080
@@ -42,7 +42,8 @@ spec:
         ports:
         - containerPort: 8080
         readinessProbe:
-          initialDelaySeconds: 30
+          periodSeconds: 3
+          failureThreshold: 20
           httpGet:
             path: /actuator/health
             port: 8080
