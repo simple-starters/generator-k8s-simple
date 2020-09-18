@@ -24,15 +24,6 @@ spec:
         env:
           - name: SPRING_PROFILES_ACTIVE
             value: k8sdev
-          - name: MYSQL_DATABASE
-            value: my_database
-          - name: MYSQL_USER
-            value: springuser
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mysql
-                key: mysql-password
         livenessProbe:
           initialDelaySeconds: 60
           httpGet:
