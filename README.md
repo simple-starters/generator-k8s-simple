@@ -72,7 +72,7 @@ eval $(minikube docker-env)
 **Step 1:** Build the project and create the container image:
 
 ```
-./mvnw clean package spring-boot:build-image
+./mvnw -DskipTests clean package spring-boot:build-image
 ```
 
 **Step 2:** Deploy the app to Kubernetes
@@ -83,11 +83,9 @@ kubectl apply -f kubernetes/app
 
 Use `kubectl get all` to verify that the resources created.
 
-Accessing the application's endpoint varies based on the type of Kubernetes cluster you are using.  For example, if minikube is being used, look for the endpoint to access using the command `minikube service list`
+Accessing the application's endpoint varies based on the type of Kubernetes cluster you are using.  For example, if minikube is being used, look for the endpoint to access using the command `minikube service list`. For othetr Kubernetes clusters, you can use port-forwarding to access the service. Run `kubectl port-forward service/<name-of-service> 8080:80` to forward the service port to `localhost:8080`.
 
 The README.md file from the code repository for the appliation should include a few `curl` commands to exercise the application.
-
-
 
 # Generator Information
 
