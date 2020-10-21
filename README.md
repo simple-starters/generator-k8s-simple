@@ -1,13 +1,12 @@
 # Simple generator for Kubernetes resources
 
-This generator creates a Kubernetes Service and Deployment Resource to deploy a Spring Boot application.  It also can create the Kubernetes resources for deploying a MySQL database, should the application need it.
+This generator creates a Kubernetes Service and Deployment Resource to deploy a Spring Boot application.  It also can create the Kubernetes resources for deploying a MySQL database or a small Kafka cluster, should the application need it.
 
 If you used the starter service, then the generator has already been executed and you can deploy it's required services and then build and deploy the application.
 
 ## Deploy required services
 
-If your application needs services such as a Database or Message Queue, this section shows you how to deploy these services to Kubernetes
-
+If your application needs services such as a database or message broker, this section shows you how to deploy these services to Kubernetes
 
 ### MySQL
 
@@ -19,13 +18,14 @@ kubectl create secret generic mysql \
   --from-literal=mysql-password=$(echo $RANDOM)
 ```
 
-**Step 2:** Deploy the service"
+**Step 2:** Deploy the database:
 
 ```
 kubectl apply -f kubernetes/services/mysql
 ```
 
 #### Deleting Resources
+
 To recreate the secret, first delete the existing secret:
 
 ```
@@ -41,6 +41,22 @@ To delete the MySQL service and deployment in addition to the persistent volume:
 
 ```
 kubectl delete deployment,services,pvc -l app=mysql
+```
+
+### Kafka
+
+Deploy the cluster:
+
+```
+kubectl apply -f kubernetes/services/kafka
+```
+
+#### Deleting Resources
+
+To delete the Kafka cluster and Zookeeper:
+
+```
+kubectl delete deployment,services -l app=kafka
 ```
 
 ## Building and deploying the application
