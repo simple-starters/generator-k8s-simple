@@ -7,7 +7,7 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/name: {{artifactId}}
-  name: {{artifactId}}-app
+  name: {{artifactId}}
 spec:
   replicas: 1
   selector:
